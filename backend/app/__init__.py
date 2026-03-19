@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
@@ -19,16 +19,13 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
 
-    # Extensions
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
     CORS(app, origins=[app.config["FRONTEND_URL"]])
 
-    # Ensure upload folder exists
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-    # Register blueprints
     from .routes.auth import auth_bp
     from .routes.achievements import achievements_bp
     from .routes.goals import goals_bp
@@ -48,5 +45,13 @@ def create_app(config_name=None):
     @app.route("/api/health")
     def health():
         return {"status": "ok", "message": "Happiness Passport API is running"}
+
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def serve_frontend(path):
+        dist_dir = os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")
+        if path and os.path.exists(os.path.join(dist_dir, path)):
+            return send_from_directory(dist_dir, path)
+        return send_from_directory(dist_dir, "index.html")
 
     return app
