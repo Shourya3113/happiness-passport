@@ -11,7 +11,7 @@ class Config:
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
 
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "postgresql://postgres:password@localhost:5432/happiness_passport"
+        "DATABASE_URL", "sqlite:///happiness_passport.db" "postgresql://postgres:password@localhost:5432/happiness_passport"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
