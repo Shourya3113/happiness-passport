@@ -27,7 +27,7 @@ def register():
         return jsonify({"error": "Email already registered"}), 409
 
     student_id = data.get("student_id") or None
-department = data.get("department") or None
+    department = data.get("department") or None
 
     user = User(
         name=data["name"],
